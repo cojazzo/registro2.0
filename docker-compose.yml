@@ -33,6 +33,7 @@ services:
       - OLLAMA_URL=${OLLAMA_URL:-http://100.125.127.8:11434}
       - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3}
       - PORT=3000
+      - HOSTNAME=0.0.0.0
     depends_on:
       db:
         condition: service_healthy
