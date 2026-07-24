@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ================= MODELOS =================
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  passwordHash String        
+  name         String
+  role         String        @default("READ_ONLY")
+  createdAt    DateTime      @default(now())
+  
+  appointments Appointment[]
+  notes        Note[]
+  auditLogs    AuditLog[]
+}
+
+model Patient {
+  id                String    @id @default(uuid())
+  firstName         String
+  lastName          String
+  curp              String?   @unique
+  clinicalId        String?
+  dob               DateTime
+  gender            String
+  phone             String?
+  email             String?
+  street            String?
+  neighborhood      String?
+  zipCode           String?
+  city              String?
+  state             String?
+  emergencyContact  String?
+  mainDiagnosis     String?
+  observations      String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  appointments      Appointment[]
+  notes             Note[]
+  labs              LaboratoryResult[]
+  vitals            Vitals[]
+  medications       Medication[]
+}
+
+model Appointment {
+  id          String            @id @default(uuid())
+  patientId   String
+  userId      String            
+  dateTime    DateTime
+  service     String
+  room        String            @default("No Asignado")
+  status      String            @default("SCHEDULED")
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  patient     Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  user        User              @relation(fields: [userId], references: [id])
+  notes       Note[]
+  vitals      Vitals[]
+  labs        LaboratoryResult[]
+  medications Medication[]
+}
+
+model Note {
+  id            String       @id @default(uuid())
+  patientId     String
+  userId        String
+  appointmentId String?      
+  service       String
+  content       String?       
+  evolution     String?
+  diagnosis     String?
+  plan          String?
+  prognosis     String?
+  createdAt     DateTime     @default(now())
+
+  patient       Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  user          User         @relation(fields: [userId], references: [id])
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+}
+
+model LaboratoryResult {
+  id             String   @id @default(uuid())
+  patientId      String
+  date           DateTime
+  parameter      String
+  value          Float
+  unit           String?
+  referenceRange String?
+  isAbnormal     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  patient        Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  appointmentId  String?
+  appointment    Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+}
+
+model Vitals {
+  id               String   @id @default(uuid())
+  patientId        String
+  date             DateTime @default(now())
+  weight           Float?   
+  height           Float?   
+  waist            Float?   
+  bloodPressure    String?  
+  heartRate        Int?
+  respiratoryRate  Int?
+  oxygenSaturation Float?
+  temperature      Float?
+  physicalExam     String?  
+  
+  patient          Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  appointmentId    String?
+  appointment      Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+}
+
+model Medication {
+  id               String   @id @default(uuid())
+  patientId        String
+  date             DateTime @default(now())
+  name             String   
+  dosage           String?  
+  frequency        String?  
+  
+  patient          Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  appointmentId    String?
+  appointment      Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  action     String
+  targetType String   
+  targetId   String?
+  details    String?  
+  createdAt  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}

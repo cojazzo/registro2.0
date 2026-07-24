@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: registro_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password_seguro_registro}
+      POSTGRES_DB: ${POSTGRES_DB:-registro2}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: registro_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password_seguro_registro}@db:5432/${POSTGRES_DB:-registro2}?schema=public
+      - SESSION_SECRET=${SESSION_SECRET:-DzqZGLWlr1y8TFVIJOOqGSv2lilCz4a2kyC8NDXfgtA=}
+      - OLLAMA_URL=${OLLAMA_URL:-http://100.125.127.8:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3}
+      - PORT=3000
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
