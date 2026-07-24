@@ -1,8 +1,8 @@
 FROM node:20-alpine AS base
 
-# 1. Instalar dependencias necesarias
+# 1. Instalar dependencias necesarias incluyendo OpenSSL
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -15,12 +15,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npx prisma generate
 RUN npm run build
 
 # 3. Imagen final de producción de mínimo tamaño
 FROM base AS runner
+RUN apk add --no-cache openssl
 WORKDIR /app
 
 ENV NODE_ENV=production
