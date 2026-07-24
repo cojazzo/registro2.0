@@ -45,7 +45,6 @@ export function AcrChart({ data, medications = [] }: { data: ChartDataPoint[], m
               stroke="#6366f1" 
               strokeWidth={2}
               strokeDasharray="4 4"
-              isFront={true}
               label={{ position: 'top', value: "Losartán", fill: '#4f46e5', fontSize: 10, fontWeight: 'bold' }} 
             />
           )}
@@ -55,7 +54,6 @@ export function AcrChart({ data, medications = [] }: { data: ChartDataPoint[], m
               stroke="#6366f1" 
               strokeWidth={2}
               strokeDasharray="4 4"
-              isFront={true}
               label={{ position: 'top', value: "Dapagliflozina", fill: '#4f46e5', fontSize: 10, fontWeight: 'bold' }} 
             />
           )}
@@ -103,7 +101,6 @@ export function EgfrChart({ data, medications = [] }: { data: ChartDataPoint[], 
               stroke="#6366f1" 
               strokeWidth={2}
               strokeDasharray="4 4"
-              isFront={true}
               label={{ position: 'top', value: "Losartán", fill: '#4f46e5', fontSize: 10, fontWeight: 'bold' }} 
             />
           )}
@@ -113,7 +110,6 @@ export function EgfrChart({ data, medications = [] }: { data: ChartDataPoint[], 
               stroke="#6366f1" 
               strokeWidth={2}
               strokeDasharray="4 4"
-              isFront={true}
               label={{ position: 'top', value: "Dapagliflozina", fill: '#4f46e5', fontSize: 10, fontWeight: 'bold' }} 
             />
           )}

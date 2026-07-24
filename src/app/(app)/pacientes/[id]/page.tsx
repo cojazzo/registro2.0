@@ -95,7 +95,7 @@ export default async function ExpedientePage({
         Valor: pointEgfr !== null ? parseFloat(pointEgfr.toFixed(1)) : null,
       }
     })
-    .filter((point) => point.Valor !== null)
+    .filter((point): point is ChartDataPoint => point.Valor !== null)
 
   const acrDataPoints: ChartDataPoint[] = acrLabs.map((l) => ({
     name: format(new Date(l.date), "MMM yy", { locale: es }),
