@@ -26,7 +26,7 @@ services:
     container_name: registro_app
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-3001}:3000"
+      - "${APP_PORT:-3002}:3000"
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password_seguro_registro}@db:5432/${POSTGRES_DB:-registro2}?schema=public
       - SESSION_SECRET=${SESSION_SECRET:-DzqZGLWlr1y8TFVIJOOqGSv2lilCz4a2kyC8NDXfgtA=}
