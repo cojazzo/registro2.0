@@ -10,7 +10,7 @@
  * @returns eGFR (ml/min/1.73m2) o nulo si faltan datos críticos.
  */
 export function calculateEgfr(
-  scr: number, 
+  scr: number | null | undefined, 
   ageInYears: number, 
   gender: string, 
   heightCm?: number | null

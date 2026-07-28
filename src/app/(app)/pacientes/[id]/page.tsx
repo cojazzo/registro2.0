@@ -97,10 +97,12 @@ export default async function ExpedientePage({
     })
     .filter((point): point is ChartDataPoint => point.Valor !== null)
 
-  const acrDataPoints: ChartDataPoint[] = acrLabs.map((l) => ({
-    name: format(new Date(l.date), "MMM yy", { locale: es }),
-    Valor: l.value,
-  }))
+  const acrDataPoints: ChartDataPoint[] = acrLabs
+    .filter((l) => l.value !== null)
+    .map((l) => ({
+      name: format(new Date(l.date), "MMM yy", { locale: es }),
+      Valor: l.value!,
+    }))
 
   const medicationsForCharts = patient.medications
     .filter(m => new Date(m.date).getFullYear() > 1900)

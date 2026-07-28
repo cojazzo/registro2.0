@@ -92,8 +92,10 @@ model LaboratoryResult {
   id             String   @id @default(uuid())
   patientId      String
   date           DateTime
+  requestNumber  String?
   parameter      String
-  value          Float
+  value          Float?
+  textValue      String?
   unit           String?
   referenceRange String?
   isAbnormal     Boolean  @default(false)

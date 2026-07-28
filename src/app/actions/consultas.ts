@@ -138,16 +138,20 @@ export async function saveConsultation(data: ConsultationData) {
 
     // 4. Crear Laboratorios
     if (data.labs && data.labs.length > 0) {
-      const labsData = data.labs.map(lab => ({
-        patientId: data.patientId,
-        appointmentId: appointmentIdToLink,
-        date: now,
-        parameter: lab.parameter,
-        value: Number(lab.value),
-        unit: lab.unit,
-        referenceRange: lab.referenceRange,
-        isAbnormal: lab.isAbnormal
-      }))
+      const labsData = data.labs.map(lab => {
+        const numVal = lab.value !== undefined && lab.value !== null && !isNaN(Number(lab.value)) ? Number(lab.value) : null
+        return {
+          patientId: data.patientId,
+          appointmentId: appointmentIdToLink,
+          date: now,
+          parameter: lab.parameter,
+          value: numVal,
+          textValue: String(lab.value ?? ""),
+          unit: lab.unit,
+          referenceRange: lab.referenceRange,
+          isAbnormal: lab.isAbnormal
+        }
+      })
       await tx.laboratoryResult.createMany({ data: labsData })
     }
 

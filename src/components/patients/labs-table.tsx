@@ -3,13 +3,16 @@
 import Link from "next/link"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
-import { FlaskConical, Search } from "lucide-react"
+import { FlaskConical, Search, Hash } from "lucide-react"
+import { LabPdfUpload } from "./lab-pdf-upload"
 
 type Lab = {
   id: string
   date: Date | string
+  requestNumber?: string | null
   parameter: string
-  value: number
+  value: number | null
+  textValue?: string | null
   unit: string | null
   referenceRange: string | null
   isAbnormal: boolean
@@ -34,6 +37,7 @@ export function PatientLabsTable({ labs, patientId }: { labs: Lab[], patientId: 
         <h2 className="font-semibold text-slate-700 flex items-center gap-2">
           <FlaskConical className="h-4 w-4" /> Historial de Laboratorios
         </h2>
+        <LabPdfUpload patientId={patientId} />
       </div>
 
       {sortedDates.length === 0 ? (
@@ -43,6 +47,7 @@ export function PatientLabsTable({ labs, patientId }: { labs: Lab[], patientId: 
           {sortedDates.map((dateStr) => {
             const sessionLabs = groupedLabs[dateStr]
             const abnormalCount = sessionLabs.filter(l => l.isAbnormal).length
+            const requestNum = sessionLabs.find(l => l.requestNumber)?.requestNumber
 
             return (
               <div
@@ -54,6 +59,12 @@ export function PatientLabsTable({ labs, patientId }: { labs: Lab[], patientId: 
                     <span className="text-sm font-semibold text-slate-800">
                       {format(new Date(dateStr), "d MMM yyyy, HH:mm", { locale: es })}
                     </span>
+                    {requestNum && (
+                      <span className="text-xs font-mono font-medium px-2 py-0.5 rounded bg-slate-200 text-slate-700 flex items-center gap-1">
+                        <Hash className="h-3 w-3 text-slate-400" />
+                        {requestNum}
+                      </span>
+                    )}
                     {abnormalCount > 0 && (
                       <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700">
                         {abnormalCount} {abnormalCount === 1 ? "anormalidad" : "anormalidades"}

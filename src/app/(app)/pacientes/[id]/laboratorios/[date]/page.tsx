@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
-import { ArrowLeft, FlaskConical, AlertTriangle } from "lucide-react"
+import { ArrowLeft, FlaskConical, AlertTriangle, Hash } from "lucide-react"
 
 export default async function LabDetailsPage({
   params,
@@ -34,6 +34,8 @@ export default async function LabDetailsPage({
 
   if (labs.length === 0) notFound()
 
+  const requestNum = labs.find(l => l.requestNumber)?.requestNumber
+
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       {/* Header / Back navigation */}
@@ -48,9 +50,20 @@ export default async function LabDetailsPage({
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 font-sans">
             Resultados de Laboratorio
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Paciente: <strong>{patient.lastName}, {patient.firstName}</strong> · Fecha: {format(dateObj, "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es })}
-          </p>
+          <div className="flex items-center gap-2 flex-wrap text-muted-foreground text-sm mt-1">
+            <span>Paciente: <strong>{patient.lastName}, {patient.firstName}</strong></span>
+            <span>·</span>
+            <span>Fecha: {format(dateObj, "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es })}</span>
+            {requestNum && (
+              <>
+                <span>·</span>
+                <span className="text-xs font-mono font-medium px-2 py-0.5 rounded bg-slate-100 text-slate-700 flex items-center gap-1 border border-slate-200">
+                  <Hash className="h-3 w-3 text-slate-400" />
+                  Petición: {requestNum}
+                </span>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -82,7 +95,7 @@ export default async function LabDetailsPage({
                       lab.isAbnormal ? "text-red-600" : "text-slate-900"
                     }`}
                   >
-                    {lab.value}
+                    {lab.textValue ?? lab.value ?? "—"}
                     {lab.isAbnormal && (
                       <AlertTriangle className="inline h-4 w-4 ml-2 text-red-500" />
                     )}
