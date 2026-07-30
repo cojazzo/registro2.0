@@ -26,6 +26,8 @@ export async function createUser(
   const email = (formData.get('email') as string | null)?.trim() ?? ''
   const password = (formData.get('password') as string | null) ?? ''
   const role = (formData.get('role') as string | null) ?? 'READ_ONLY'
+  const titulo = (formData.get('titulo') as string | null)?.trim() || null
+  const cedulaProfesional = (formData.get('cedulaProfesional') as string | null)?.trim() || null
 
   if (!name || !email || !password) {
     return { error: 'Todos los campos son obligatorios.' }
@@ -37,7 +39,7 @@ export async function createUser(
   }
 
   const passwordHash = await bcrypt.hash(password, 12)
-  await prisma.user.create({ data: { name, email, passwordHash, role } })
+  await prisma.user.create({ data: { name, email, passwordHash, role, titulo, cedulaProfesional } })
 
   revalidatePath('/admin/usuarios')
   return { success: true }
@@ -53,12 +55,14 @@ export async function updateUser(
   const name = (formData.get('name') as string | null)?.trim() ?? ''
   const role = (formData.get('role') as string | null) ?? 'READ_ONLY'
   const newPassword = (formData.get('password') as string | null)?.trim()
+  const titulo = (formData.get('titulo') as string | null)?.trim() || null
+  const cedulaProfesional = (formData.get('cedulaProfesional') as string | null)?.trim() || null
 
   if (!id || !name) {
     return { error: 'Datos incompletos.' }
   }
 
-  const data: { name: string; role: string; passwordHash?: string } = { name, role }
+  const data: { name: string; role: string; passwordHash?: string; titulo: string | null; cedulaProfesional: string | null } = { name, role, titulo, cedulaProfesional }
   if (newPassword) {
     data.passwordHash = await bcrypt.hash(newPassword, 12)
   }

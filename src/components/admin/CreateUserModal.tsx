@@ -7,6 +7,10 @@ import { X, Loader2 } from 'lucide-react'
 const ROLES = [
   { value: 'ADMIN', label: 'Administrador' },
   { value: 'DOCTOR', label: 'Doctor' },
+  { value: 'TRABAJO_SOCIAL', label: 'Trabajo Social' },
+  { value: 'NUTRICION', label: 'Nutrición' },
+  { value: 'PSICOLOGIA', label: 'Psicología' },
+  { value: 'ESTUDIANTE', label: 'Estudiante' },
   { value: 'READ_ONLY', label: 'Solo Lectura' },
 ]
 
@@ -103,6 +107,16 @@ export function CreateUserModal({ onClose }: { onClose: () => void }) {
                 <option key={r.value} value={r.value}>{r.label}</option>
               ))}
             </select>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div>
+              <label style={labelStyle} htmlFor="create-titulo">Título Profesional</label>
+              <input id="create-titulo" name="titulo" style={inputStyle} placeholder="Ej. Lic. Trabajo Social" />
+            </div>
+            <div>
+              <label style={labelStyle} htmlFor="create-cedula">Cédula Profesional</label>
+              <input id="create-cedula" name="cedulaProfesional" style={inputStyle} placeholder="Ej. 12345678" />
+            </div>
           </div>
           <button
             type="submit"

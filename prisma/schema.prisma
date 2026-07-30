@@ -11,12 +11,14 @@ datasource db {
 // ================= MODELOS =================
 
 model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
-  passwordHash String        
-  name         String
-  role         String        @default("READ_ONLY")
-  createdAt    DateTime      @default(now())
+  id                  String        @id @default(uuid())
+  email               String        @unique
+  passwordHash        String        
+  name                String
+  role                String        @default("READ_ONLY")
+  titulo              String?
+  cedulaProfesional   String?
+  createdAt           DateTime      @default(now())
   
   appointments Appointment[]
   notes        Note[]

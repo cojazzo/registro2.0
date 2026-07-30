@@ -8,6 +8,10 @@ import { useState } from 'react'
 const ROLES = [
   { value: 'ADMIN', label: 'Administrador' },
   { value: 'DOCTOR', label: 'Doctor' },
+  { value: 'TRABAJO_SOCIAL', label: 'Trabajo Social' },
+  { value: 'NUTRICION', label: 'Nutrición' },
+  { value: 'PSICOLOGIA', label: 'Psicología' },
+  { value: 'ESTUDIANTE', label: 'Estudiante' },
   { value: 'READ_ONLY', label: 'Solo Lectura' },
 ]
 
@@ -31,7 +35,7 @@ const labelStyle: React.CSSProperties = {
   marginBottom: '0.35rem',
 }
 
-type EditableUser = { id: string; name: string; email: string; role: string }
+type EditableUser = { id: string; name: string; email: string; role: string; titulo: string | null; cedulaProfesional: string | null }
 
 export function EditUserModal({
   user,
@@ -118,6 +122,16 @@ export function EditUserModal({
                 <option key={r.value} value={r.value}>{r.label}</option>
               ))}
             </select>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div>
+              <label style={labelStyle} htmlFor="edit-titulo">Título Profesional</label>
+              <input id="edit-titulo" name="titulo" defaultValue={user.titulo ?? ''} style={inputStyle} placeholder="Ej. Lic. Trabajo Social" />
+            </div>
+            <div>
+              <label style={labelStyle} htmlFor="edit-cedula">Cédula Profesional</label>
+              <input id="edit-cedula" name="cedulaProfesional" defaultValue={user.cedulaProfesional ?? ''} style={inputStyle} placeholder="Ej. 12345678" />
+            </div>
           </div>
           <div>
             <label style={labelStyle} htmlFor="edit-password">Nueva contraseña <span style={{ color: '#475569' }}>(dejar en blanco para no cambiar)</span></label>

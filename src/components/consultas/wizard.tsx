@@ -144,7 +144,7 @@ export function ConsultaWizard({
   const [tsEtapaCiclo, setTsEtapaCiclo] = useState("")
   const [tsProblematicas, setTsProblematicas] = useState("")
   
-  const [tsAlimentacion, setTsAlimentacion] = useState({ leche: "", verduras: "", leguminosas: "", jugos: "", embutidos: "", huevo: "", cereales: "", carne: "", refresco: "", fritos: "", cafe: "", frutas: "" })
+  const [tsAlimentacion, setTsAlimentacion] = useState({ leche: "", verduras: "", leguminosas: "", jugos: "", embutidos: "", huevo: "", cereales: "", carne: "", bebidasGasificadas: "", fritos: "", cafe: "", frutas: "" })
   const [tsCalidadAlimentacion, setTsCalidadAlimentacion] = useState("")
   
   const [tsVivienda, setTsVivienda] = useState({ tipo: "", tenencia: "", credito: "", dormitorios: "", cocina: "", comedor: "", sala: "", cochera: "", banos: "", patio: "" })
@@ -153,8 +153,14 @@ export function ConsultaWizard({
   const [tsMateriales, setTsMateriales] = useState({ paredes: "", pisos: "", techos: "" })
   const [tsPersonasCuarto, setTsPersonasCuarto] = useState("")
   const [tsFocos, setTsFocos] = useState("")
-  const [tsVehiculo, setTsVehiculo] = useState("")
-  const [tsAnimales, setTsAnimales] = useState("")
+  const [tsVehiculoTiene, setTsVehiculoTiene] = useState(false)
+  const [tsVehiculoEspecificacion, setTsVehiculoEspecificacion] = useState("")
+  const [tsAnimalesTiene, setTsAnimalesTiene] = useState(false)
+  const [tsAnimalesEspecificacion, setTsAnimalesEspecificacion] = useState("")
+  // Conductas de Riesgo
+  const [tsConductas, setTsConductas] = useState({ tabaquismo: "", omisionDialisisPeritoneal: "", ausentismoHemodialisis: "", transgresionHidrica: "", consumoAlcohol: "" })
+  // Datos del Procedimiento
+  const [tsDatosProcedimiento, setTsDatosProcedimiento] = useState({ cuandoSeSolicito: "", queProfesionalSolicito: "", cuandoProgramaron: "" })
   
   const [tsSeguridadSocial, setTsSeguridadSocial] = useState("")
   const [tsServicioSalud, setTsServicioSalud] = useState("")
@@ -431,8 +437,8 @@ ${psychConclusiones}
           servicios: tsServicios,
           personasPorCuarto: tsPersonasCuarto,
           focos: tsFocos,
-          vehiculo: tsVehiculo,
-          convivenciaAnimales: tsAnimales,
+          vehiculo: tsVehiculoTiene ? `Sí (${tsVehiculoEspecificacion})` : "No",
+          convivenciaAnimales: tsAnimalesTiene ? `Sí (${tsAnimalesEspecificacion})` : "No",
           redesApoyo: tsRedesApoyo,
           seguridadSocial: tsSeguridadSocial,
           serviciosSaludUsados: tsServicioSalud,
@@ -441,6 +447,8 @@ ${psychConclusiones}
           costoTraslado: tsCostoTraslado,
           medioTransporte: tsMedioTransporte,
           dificultadesAcceso: tsDificultadesAcceso,
+          conductasRiesgo: tsConductas,
+          datosProcedimiento: tsDatosProcedimiento,
           descripcionCaso: tsDescripcionCaso,
           dinamicaFamiliar: tsDinamicaFamiliar,
           actitudesPaciente: tsActitudes,
@@ -473,7 +481,7 @@ ${tsNucleo.map(m => `| ${m.nombre} | ${m.edad} | ${m.edoCivil} | ${m.escolaridad
 ### Alimentación (Frecuencia por Semana)
 - Leche: ${tsAlimentacion.leche} | Verduras: ${tsAlimentacion.verduras} | Leguminosas: ${tsAlimentacion.leguminosas} | Jugos: ${tsAlimentacion.jugos}
 - Embutidos: ${tsAlimentacion.embutidos} | Huevo: ${tsAlimentacion.huevo} | Cereales: ${tsAlimentacion.cereales} | Carne: ${tsAlimentacion.carne}
-- Refresco: ${tsAlimentacion.refresco} | Fritos: ${tsAlimentacion.fritos} | Café/Té: ${tsAlimentacion.cafe} | Frutas: ${tsAlimentacion.frutas}
+- Bebidas Gasificadas: ${tsAlimentacion.bebidasGasificadas} | Fritos: ${tsAlimentacion.fritos} | Café/Té: ${tsAlimentacion.cafe} | Frutas: ${tsAlimentacion.frutas}
 - **Calidad de Alimentación:** ${tsCalidadAlimentacion}
 
 ### Vivienda
@@ -482,7 +490,7 @@ ${tsNucleo.map(m => `| ${m.nombre} | ${m.edad} | ${m.edoCivil} | ${m.escolaridad
 - **Materiales:** Paredes (${tsMateriales.paredes}), Pisos (${tsMateriales.pisos}), Techos (${tsMateriales.techos})
 - **Muebles:** ${tsMuebles.join(', ')}
 - **Servicios:** ${tsServicios.join(', ')}
-- **Convivencia animales:** ${tsAnimales} | **Vehículo:** ${tsVehiculo} | **Personas por cuarto:** ${tsPersonasCuarto} | **Focos:** ${tsFocos}
+- **Convivencia animales:** ${tsAnimalesTiene ? `Sí (${tsAnimalesEspecificacion})` : 'No'} | **Vehículo:** ${tsVehiculoTiene ? `Sí (${tsVehiculoEspecificacion})` : 'No'} | **Personas por cuarto:** ${tsPersonasCuarto} | **Focos:** ${tsFocos}
 
 ### Redes de Apoyo y Salud
 | Nombre | Edad | Edo. Civil | Escolaridad | Parentesco | Ocupación | Vive | Hijos |
@@ -493,6 +501,15 @@ ${tsRedesApoyo.map(m => `| ${m.nombre} | ${m.edad} | ${m.edoCivil} | ${m.escolar
 - **Servicios de Salud Usados:** ${tsServicioSalud}
 - **Logística de Acceso:** Transporte: ${tsMedioTransporte || "—"} | Tiempo Traslado: ${tsTiempoTraslado || "—"} | Costo: ${tsCostoTraslado ? `$${tsCostoTraslado}` : "—"}
 - **Dificultades de Acceso:** ${tsDificultadesAcceso || "Ninguna"}
+
+### Conductas de Riesgo
+- **Tabaquismo:** ${tsConductas.tabaquismo || "—"} | **Omisión de Diálisis Peritoneal:** ${tsConductas.omisionDialisisPeritoneal || "—"} | **Ausentismo en Hemodiálisis:** ${tsConductas.ausentismoHemodialisis || "—"}
+- **Transgresión Hídrica:** ${tsConductas.transgresionHidrica || "—"} | **Consumo de Alcohol:** ${tsConductas.consumoAlcohol || "—"}
+
+### Datos del Procedimiento
+- **¿Cuándo se le solicitó el apoyo?** ${tsDatosProcedimiento.cuandoSeSolicito || "—"}
+- **¿Qué profesional lo solicitó?** ${tsDatosProcedimiento.queProfesionalSolicito || "—"}
+- **¿Cuándo programaron la intervención?** ${tsDatosProcedimiento.cuandoProgramaron || "—"}
 
 ## Evaluación y Diagnóstico Social
 - **Descripción del Caso:** ${tsDescripcionCaso}
@@ -1734,10 +1751,23 @@ ${Object.entries(nutAlimentacion)
               <div className="space-y-4">
                 <Label className="text-lg font-bold">Alimentación (Frecuencia por Semana)</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {Object.keys(tsAlimentacion).map(key => (
+                  {([
+                    { key: 'leche', label: 'Leche' },
+                    { key: 'verduras', label: 'Verduras' },
+                    { key: 'leguminosas', label: 'Leguminosas' },
+                    { key: 'jugos', label: 'Jugos' },
+                    { key: 'embutidos', label: 'Embutidos' },
+                    { key: 'huevo', label: 'Huevo' },
+                    { key: 'cereales', label: 'Cereales' },
+                    { key: 'carne', label: 'Carne' },
+                    { key: 'bebidasGasificadas', label: 'Bebidas Gasificadas' },
+                    { key: 'fritos', label: 'Fritos' },
+                    { key: 'cafe', label: 'Café/Té' },
+                    { key: 'frutas', label: 'Frutas' },
+                  ] as { key: keyof typeof tsAlimentacion, label: string }[]).map(({ key, label }) => (
                     <div key={key} className="space-y-1">
-                      <Label className="text-xs capitalize">{key}</Label>
-                      <Input type="number" value={(tsAlimentacion as any)[key]} onChange={e => setTsAlimentacion({...tsAlimentacion, [key]: e.target.value})} className="h-8"/>
+                      <Label className="text-xs">{label}</Label>
+                      <Input type="number" value={tsAlimentacion[key]} onChange={e => setTsAlimentacion({...tsAlimentacion, [key]: e.target.value})} className="h-8"/>
                     </div>
                   ))}
                 </div>
@@ -1772,8 +1802,40 @@ ${Object.entries(nutAlimentacion)
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  <div className="space-y-2"><Label>Convivencia con animales domésticos</Label><Input value={tsAnimales} onChange={e => setTsAnimales(e.target.value)} placeholder="Sí/No (Especifique)"/></div>
-                  <div className="space-y-2"><Label>Vehículo (Año/Modelo)</Label><Input value={tsVehiculo} onChange={e => setTsVehiculo(e.target.value)} /></div>
+                  {/* Convivencia con animales domésticos - Sí/No */}
+                  <div className="space-y-2">
+                    <Label>Convivencia con animales domésticos</Label>
+                    <div className="flex items-center gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={tsAnimalesTiene} onChange={e => { setTsAnimalesTiene(e.target.checked); if (!e.target.checked) setTsAnimalesEspecificacion(""); }} className="w-4 h-4 rounded border-slate-300 accent-orange-600" />
+                        <span className="text-sm">Sí</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={!tsAnimalesTiene} onChange={e => { setTsAnimalesTiene(!e.target.checked); setTsAnimalesEspecificacion(""); }} className="w-4 h-4 rounded border-slate-300" />
+                        <span className="text-sm">No</span>
+                      </label>
+                    </div>
+                    {tsAnimalesTiene && (
+                      <Input value={tsAnimalesEspecificacion} onChange={e => setTsAnimalesEspecificacion(e.target.value)} placeholder="Especifique cuál(es)..." className="mt-1" />
+                    )}
+                  </div>
+                  {/* Vehículo - Sí/No */}
+                  <div className="space-y-2">
+                    <Label>Vehículos</Label>
+                    <div className="flex items-center gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={tsVehiculoTiene} onChange={e => { setTsVehiculoTiene(e.target.checked); if (!e.target.checked) setTsVehiculoEspecificacion(""); }} className="w-4 h-4 rounded border-slate-300 accent-orange-600" />
+                        <span className="text-sm">Sí</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={!tsVehiculoTiene} onChange={e => { setTsVehiculoTiene(!e.target.checked); setTsVehiculoEspecificacion(""); }} className="w-4 h-4 rounded border-slate-300" />
+                        <span className="text-sm">No</span>
+                      </label>
+                    </div>
+                    {tsVehiculoTiene && (
+                      <Input value={tsVehiculoEspecificacion} onChange={e => setTsVehiculoEspecificacion(e.target.value)} placeholder="Especifique (año/modelo)..." className="mt-1" />
+                    )}
+                  </div>
                   <div className="space-y-2"><Label>Personas que duermen por cuarto</Label><Input value={tsPersonasCuarto} onChange={e => setTsPersonasCuarto(e.target.value)} /></div>
                   <div className="space-y-2"><Label>Cantidad de Focos</Label><Input type="number" value={tsFocos} onChange={e => setTsFocos(e.target.value)} /></div>
                 </div>
@@ -1850,6 +1912,52 @@ ${Object.entries(nutAlimentacion)
                 <div className="space-y-2 mt-2">
                   <Label>Dificultades Principales de Acceso</Label>
                   <Input value={tsDificultadesAcceso} onChange={e => setTsDificultadesAcceso(e.target.value)} placeholder="Ej. Falta de recursos económicos, Distancia, Horarios de atención, Ninguna" />
+                </div>
+              </div>
+
+              {/* Conductas de Riesgo */}
+              <div className="space-y-4 pt-4 border-t">
+                <Label className="text-lg font-bold text-slate-800">Conductas de Riesgo</Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>Tabaquismo</Label>
+                    <Input value={tsConductas.tabaquismo} onChange={e => setTsConductas({...tsConductas, tabaquismo: e.target.value})} placeholder="Ej. Activo, Exfumador, No" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Omisión de Diálisis Peritoneal</Label>
+                    <Input value={tsConductas.omisionDialisisPeritoneal} onChange={e => setTsConductas({...tsConductas, omisionDialisisPeritoneal: e.target.value})} placeholder="Ej. Frecuente, Ocasional, No" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Ausentismo en Hemodiálisis</Label>
+                    <Input value={tsConductas.ausentismoHemodialisis} onChange={e => setTsConductas({...tsConductas, ausentismoHemodialisis: e.target.value})} placeholder="Ej. Frecuente, Ocasional, No" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Transgresión Hídrica</Label>
+                    <Input value={tsConductas.transgresionHidrica} onChange={e => setTsConductas({...tsConductas, transgresionHidrica: e.target.value})} placeholder="Ej. Sí, No" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Consumo de Alcohol</Label>
+                    <Input value={tsConductas.consumoAlcohol} onChange={e => setTsConductas({...tsConductas, consumoAlcohol: e.target.value})} placeholder="Ej. Activo, Exbebedor, No" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Datos del Procedimiento */}
+              <div className="space-y-4 pt-4 border-t">
+                <Label className="text-lg font-bold text-slate-800">Datos del Procedimiento</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>¿Cuándo se le solicitó el apoyo?</Label>
+                    <Input value={tsDatosProcedimiento.cuandoSeSolicito} onChange={e => setTsDatosProcedimiento({...tsDatosProcedimiento, cuandoSeSolicito: e.target.value})} placeholder="Fecha o descripción" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>¿Qué profesional lo solicitó?</Label>
+                    <Input value={tsDatosProcedimiento.queProfesionalSolicito} onChange={e => setTsDatosProcedimiento({...tsDatosProcedimiento, queProfesionalSolicito: e.target.value})} placeholder="Ej. Médico Nefrólogo, Enfermería" />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>¿Cuándo programaron la intervención?</Label>
+                    <Input value={tsDatosProcedimiento.cuandoProgramaron} onChange={e => setTsDatosProcedimiento({...tsDatosProcedimiento, cuandoProgramaron: e.target.value})} placeholder="Fecha programada" />
+                  </div>
                 </div>
               </div>
             </div>

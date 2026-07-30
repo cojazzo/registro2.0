@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { Plus, Pencil, ShieldCheck, Eye, User2 } from 'lucide-react'
+import { Plus, Pencil, ShieldCheck, Eye, User2, HeartPulse, Apple, Brain, GraduationCap, Users } from 'lucide-react'
 import { CreateUserModal } from '@/components/admin/CreateUserModal'
 import { EditUserModal } from '@/components/admin/EditUserModal'
 
@@ -12,25 +12,39 @@ type UserRow = {
   name: string
   email: string
   role: string
+  titulo: string | null
+  cedulaProfesional: string | null
   createdAt: Date
 }
 
 const ROLE_LABELS: Record<string, string> = {
   ADMIN: 'Administrador',
   DOCTOR: 'Doctor',
+  TRABAJO_SOCIAL: 'Trabajo Social',
+  NUTRICION: 'Nutrición',
+  PSICOLOGIA: 'Psicología',
+  ESTUDIANTE: 'Estudiante',
   READ_ONLY: 'Solo Lectura',
 }
 
 const ROLE_COLORS: Record<string, React.CSSProperties> = {
-  ADMIN: { background: 'rgba(245,158,11,0.12)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.3)' },
-  DOCTOR: { background: 'rgba(99,102,241,0.12)', color: '#818cf8', border: '1px solid rgba(99,102,241,0.3)' },
-  READ_ONLY: { background: 'rgba(100,116,139,0.12)', color: '#94a3b8', border: '1px solid rgba(100,116,139,0.3)' },
+  ADMIN:          { background: 'rgba(245,158,11,0.12)',  color: '#f59e0b', border: '1px solid rgba(245,158,11,0.3)' },
+  DOCTOR:         { background: 'rgba(99,102,241,0.12)',  color: '#818cf8', border: '1px solid rgba(99,102,241,0.3)' },
+  TRABAJO_SOCIAL: { background: 'rgba(16,185,129,0.12)', color: '#34d399', border: '1px solid rgba(16,185,129,0.3)' },
+  NUTRICION:      { background: 'rgba(251,146,60,0.12)', color: '#fb923c', border: '1px solid rgba(251,146,60,0.3)' },
+  PSICOLOGIA:     { background: 'rgba(167,139,250,0.12)',color: '#c084fc', border: '1px solid rgba(167,139,250,0.3)' },
+  ESTUDIANTE:     { background: 'rgba(56,189,248,0.12)', color: '#38bdf8', border: '1px solid rgba(56,189,248,0.3)' },
+  READ_ONLY:      { background: 'rgba(100,116,139,0.12)',color: '#94a3b8', border: '1px solid rgba(100,116,139,0.3)' },
 }
 
 const ROLE_ICONS: Record<string, React.ElementType> = {
-  ADMIN: ShieldCheck,
-  DOCTOR: User2,
-  READ_ONLY: Eye,
+  ADMIN:          ShieldCheck,
+  DOCTOR:         User2,
+  TRABAJO_SOCIAL: Users,
+  NUTRICION:      Apple,
+  PSICOLOGIA:     Brain,
+  ESTUDIANTE:     GraduationCap,
+  READ_ONLY:      Eye,
 }
 
 export function UsersTable({ users: initialUsers }: { users: UserRow[] }) {
@@ -95,7 +109,7 @@ export function UsersTable({ users: initialUsers }: { users: UserRow[] }) {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: '#f8fafc' }}>
-                {['Nombre', 'Correo', 'Rol', 'Creado', ''].map((h) => (
+                {['Nombre', 'Correo', 'Título / Cédula', 'Rol', 'Creado', ''].map((h) => (
                   <th
                     key={h}
                     style={{
@@ -153,6 +167,18 @@ export function UsersTable({ users: initialUsers }: { users: UserRow[] }) {
                     </td>
                     <td style={{ padding: '1rem 1.5rem', color: '#475569', fontSize: '0.875rem' }}>
                       {user.email}
+                    </td>
+                    <td style={{ padding: '1rem 1.5rem' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
+                        {user.titulo ? (
+                          <span style={{ fontWeight: 500, color: '#334155', fontSize: '0.85rem' }}>{user.titulo}</span>
+                        ) : (
+                          <span style={{ color: '#cbd5e1', fontSize: '0.8rem', fontStyle: 'italic' }}>—</span>
+                        )}
+                        {user.cedulaProfesional && (
+                          <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>Céd. {user.cedulaProfesional}</span>
+                        )}
+                      </div>
                     </td>
                     <td style={{ padding: '1rem 1.5rem' }}>
                       <span
