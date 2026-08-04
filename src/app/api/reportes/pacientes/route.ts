@@ -1,10 +1,19 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import ExcelJS from "exceljs"
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = req.nextUrl
+    const fechaInicio = searchParams.get("fecha_inicio")
+    const fechaFin    = searchParams.get("fecha_fin")
+
+    const where: any = {}
+    if (fechaInicio) where.createdAt = { ...where.createdAt, gte: new Date(fechaInicio) }
+    if (fechaFin)    where.createdAt = { ...where.createdAt, lte: new Date(fechaFin + "T23:59:59.999Z") }
+
     const pacientes = await prisma.patient.findMany({
+      where,
       orderBy: { createdAt: "desc" },
     })
 

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import ExcelJS from "exceljs"
 
@@ -32,10 +32,18 @@ const FOOD_COLUMNS: { key: string; label: string }[] = [
   { key: "consome", label: "Consomé Granulado" },
 ]
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = req.nextUrl
+    const fechaInicio = searchParams.get("fecha_inicio")
+    const fechaFin    = searchParams.get("fecha_fin")
+
+    const dateWhere: any = {}
+    if (fechaInicio) dateWhere.gte = new Date(fechaInicio)
+    if (fechaFin)    dateWhere.lte = new Date(fechaFin + "T23:59:59.999Z")
+
     const citas = await prisma.appointment.findMany({
-      where: { service: "NUTRICION" },
+      where: { service: "NUTRICION", ...(Object.keys(dateWhere).length ? { dateTime: dateWhere } : {}) },
       orderBy: { dateTime: "desc" },
       include: {
         patient: { select: { id: true, firstName: true, lastName: true, curp: true, clinicalId: true } },

@@ -1,11 +1,19 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import ExcelJS from "exceljs"
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = req.nextUrl
+    const fechaInicio = searchParams.get("fecha_inicio")
+    const fechaFin    = searchParams.get("fecha_fin")
+
+    const dateWhere: any = {}
+    if (fechaInicio) dateWhere.gte = new Date(fechaInicio)
+    if (fechaFin)    dateWhere.lte = new Date(fechaFin + "T23:59:59.999Z")
+
     const citas = await prisma.appointment.findMany({
-      where: { service: "MEDICINA" },
+      where: { service: "MEDICINA", ...(Object.keys(dateWhere).length ? { dateTime: dateWhere } : {}) },
       orderBy: { dateTime: "desc" },
       include: {
         patient: { select: { id: true, firstName: true, lastName: true, curp: true, clinicalId: true } },
