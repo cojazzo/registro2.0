@@ -39,11 +39,9 @@ export function ReporteCard({
       </div>
       
       <Dialog>
-        <DialogTrigger asChild>
-          <button className="mt-4 w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-md text-sm font-medium transition-colors">
-            <Download className="h-4 w-4" />
-            Descargar
-          </button>
+        <DialogTrigger render={<button className="mt-4 w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-md text-sm font-medium transition-colors" />}>
+          <Download className="h-4 w-4" />
+          Descargar
         </DialogTrigger>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
