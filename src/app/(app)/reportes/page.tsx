@@ -22,7 +22,7 @@ export default function ReportesPage() {
           title="Directorio de Pacientes"
           description="Exporta los datos demográficos, de contacto y el diagnóstico principal de todos los pacientes registrados."
           endpoint="/api/reportes/pacientes"
-          icon={Users}
+          icon={<Users className="h-6 w-6" />}
           iconClass="bg-emerald-100 text-emerald-600"
         />
 
@@ -30,7 +30,7 @@ export default function ReportesPage() {
           title="Consultas Médicas"
           description="Descarga un registro consolidado de todas las citas médicas, notas de evolución y signos vitales (somatometría)."
           endpoint="/api/reportes/clinicos"
-          icon={Activity}
+          icon={<Activity className="h-6 w-6" />}
           iconClass="bg-indigo-100 text-indigo-600"
         />
 
@@ -40,7 +40,7 @@ export default function ReportesPage() {
           title="Consultas de Psicología"
           description="Descarga un registro de todas las citas de psicología, impresiones diagnósticas, intervenciones y planes de seguimiento."
           endpoint="/api/reportes/psicologia"
-          icon={Activity}
+          icon={<Activity className="h-6 w-6" />}
           iconClass="bg-purple-100 text-purple-600"
         />
 
@@ -48,7 +48,7 @@ export default function ReportesPage() {
           title="Consultas de Nutrición"
           description="Extrae el registro de las citas de nutrición, análisis dietéticos, planes de alimentación y recomendaciones."
           endpoint="/api/reportes/nutricion"
-          icon={Activity}
+          icon={<Activity className="h-6 w-6" />}
           iconClass="bg-orange-100 text-orange-600"
         />
 
@@ -56,7 +56,7 @@ export default function ReportesPage() {
           title="Trabajo Social"
           description="Exporta todas las evaluaciones sociales, datos socioeconómicos, estructura familiar y diagnósticos situacionales."
           endpoint="/api/reportes/trabajo-social"
-          icon={Users}
+          icon={<Users className="h-6 w-6" />}
           iconClass="bg-blue-100 text-blue-600"
         />
       </div>

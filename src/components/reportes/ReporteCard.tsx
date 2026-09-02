@@ -8,13 +8,13 @@ export function ReporteCard({
   title, 
   description, 
   endpoint, 
-  icon: Icon, 
+  icon, 
   iconClass 
 }: { 
   title: string
   description: string
   endpoint: string
-  icon: any
+  icon: React.ReactNode
   iconClass: string 
 }) {
   const [fechaInicio, setFechaInicio] = useState("")
@@ -31,7 +31,7 @@ export function ReporteCard({
   return (
     <div className="bg-white border rounded-xl shadow-sm p-6 flex flex-col items-start gap-4 hover:shadow-md transition-shadow">
       <div className={`p-3 rounded-full ${iconClass}`}>
-        <Icon className="h-6 w-6" />
+        {icon}
       </div>
       <div className="flex-1">
         <h2 className="text-lg font-bold text-slate-900">{title}</h2>
