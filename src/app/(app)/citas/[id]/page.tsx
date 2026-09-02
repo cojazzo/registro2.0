@@ -42,6 +42,25 @@ const NUT_FOOD_ITEMS_DISPLAY = [
   { key: "consome", label: "Consomé granulado" }
 ]
 
+// Determina el tratamiento del profesional según su rol y título registrado
+function getProfessionalTitle(role: string, titulo: string | null | undefined, name: string): string {
+  // Si tiene título registrado, usarlo directamente
+  if (titulo && titulo.trim()) return `${titulo.trim()} ${name}`
+  // Si es médico, usar Dr./Dra.
+  if (role === "DOCTOR" || role === "MEDICINA") return `Dr(a). ${name}`
+  // Por área
+  const ROLE_TRATAMIENTO: Record<string, string> = {
+    TRABAJO_SOCIAL: "Lic. en Trabajo Social",
+    NUTRICION: "Lic. en Nutrición",
+    PSICOLOGIA: "Lic. en Psicología",
+    ESTUDIANTE: "Est.",
+    ADMIN: "",
+    READ_ONLY: "",
+  }
+  const prefix = ROLE_TRATAMIENTO[role]
+  return prefix ? `${prefix} ${name}` : name
+}
+
 export default async function AppointmentDetailPage({
   params,
 }: {
@@ -54,9 +73,9 @@ export default async function AppointmentDetailPage({
     where: { id },
     include: {
       patient: true,
-      user: { select: { name: true, role: true } },
+      user: { select: { name: true, role: true, titulo: true, cedulaProfesional: true } },
       notes: { 
-        include: { user: { select: { name: true } } },
+        include: { user: { select: { name: true, role: true, titulo: true, cedulaProfesional: true } } },
         orderBy: { createdAt: "desc" }
       },
       vitals: { orderBy: { date: "desc" } },
@@ -316,7 +335,7 @@ export default async function AppointmentDetailPage({
                 {appointment.notes.map((note) => (
                   <div key={note.id} className="space-y-1">
                     <p className="text-xs text-slate-400">
-                      Registrado por Dr(a). {note.user.name}
+                      Registrado por {getProfessionalTitle(note.user.role, note.user.titulo, note.user.name)}
                     </p>
                     <div className="space-y-4 bg-slate-50/50 p-4 rounded-lg border border-slate-100">
                       {(() => {
@@ -848,7 +867,7 @@ export default async function AppointmentDetailPage({
           <div className="space-y-1.5">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Datos de la Consulta</h3>
             <p><strong>Fecha / Hora:</strong> {format(new Date(appointment.dateTime), "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es })}</p>
-            <p><strong>Especialista:</strong> {appointment.user.name} ({appointment.user.role})</p>
+            <p><strong>Especialista:</strong> {getProfessionalTitle(appointment.user.role, appointment.user.titulo, appointment.user.name)}</p>
             <p><strong>Área de Atención:</strong> {appointment.service}</p>
             {appointment.room && <p><strong>Consultorio:</strong> {appointment.room}</p>}
           </div>
@@ -1047,8 +1066,19 @@ export default async function AppointmentDetailPage({
                       <div>
                         <strong>Condiciones de Vivienda:</strong>
                         <p className="mt-0.5 text-slate-700 leading-normal">
-                          Vivienda {parsed.vivienda?.tipo || "—"} ({parsed.vivienda?.tenencia || "—"}). Materiales: Paredes {parsed.materiales?.paredes || "—"}, Techos {parsed.materiales?.techos || "—"}. Servicios: {Array.isArray(parsed.servicios) ? parsed.servicios.join(", ") : "—"}. Muebles: {Array.isArray(parsed.muebles) ? parsed.muebles.join(", ") : "—"}. Convivencia Animales: {parsed.convivenciaAnimales || "—"}.
+                          Vivienda {parsed.vivienda?.tipo || "—"} ({parsed.vivienda?.tenencia || "—"}). Materiales: Paredes {parsed.materiales?.paredes || "—"}, Pisos {parsed.materiales?.pisos || "—"}, Techos {parsed.materiales?.techos || "—"}. Animales: {parsed.convivenciaAnimales || "—"}. Vehículo: {parsed.vehiculo || "—"}.
                         </p>
+                        {(parsed.vivienda?.dormitorios || parsed.vivienda?.banos) && (
+                          <p className="mt-0.5 text-slate-600 text-[10px]">
+                            Habitaciones — Dormitorios: {parsed.vivienda?.dormitorios || "—"} | Cocina: {parsed.vivienda?.cocina || "—"} | Comedor: {parsed.vivienda?.comedor || "—"} | Sala: {parsed.vivienda?.sala || "—"} | Cochera: {parsed.vivienda?.cochera || "—"} | Baños: {parsed.vivienda?.banos || "—"} | Patio: {parsed.vivienda?.patio || "—"} | Focos: {parsed.focos || "—"} | Personas/cuarto: {parsed.personasPorCuarto || "—"}
+                          </p>
+                        )}
+                        {Array.isArray(parsed.muebles) && parsed.muebles.length > 0 && (
+                          <p className="mt-0.5 text-slate-600 text-[10px]">Muebles: {parsed.muebles.join(", ")}</p>
+                        )}
+                        {Array.isArray(parsed.servicios) && parsed.servicios.length > 0 && (
+                          <p className="mt-0.5 text-slate-600 text-[10px]">Servicios: {parsed.servicios.join(", ")}</p>
+                        )}
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
@@ -1068,6 +1098,24 @@ export default async function AppointmentDetailPage({
                           <p className="mt-0.5 text-slate-800 font-bold">{parsed.viabilidadTrasplante || "—"}</p>
                         </div>
                       </div>
+
+                      {parsed.conductasRiesgo && (
+                        <div>
+                          <strong>Conductas de Riesgo:</strong>
+                          <p className="mt-0.5 text-slate-700 text-[10px]">
+                            Tabaquismo: {parsed.conductasRiesgo.tabaquismo || "—"} | Omisión Diálisis Peritoneal: {parsed.conductasRiesgo.omisionDialisisPeritoneal || "—"} | Ausentismo Hemodiálisis: {parsed.conductasRiesgo.ausentismoHemodialisis || "—"} | Transgresión Hídrica: {parsed.conductasRiesgo.transgresionHidrica || "—"} | Consumo Alcohol: {parsed.conductasRiesgo.consumoAlcohol || "—"}
+                          </p>
+                        </div>
+                      )}
+
+                      {parsed.datosProcedimiento && (
+                        <div>
+                          <strong>Datos del Procedimiento:</strong>
+                          <p className="mt-0.5 text-slate-700 text-[10px]">
+                            Solicitado: {parsed.datosProcedimiento.cuandoSeSolicito || "—"} | Profesional que solicitó: {parsed.datosProcedimiento.queProfesionalSolicito || "—"} | Intervención programada: {parsed.datosProcedimiento.cuandoProgramaron || "—"}
+                          </p>
+                        </div>
+                      )}
 
                       <div>
                         <strong>Diagnóstico Situacional:</strong>
@@ -1218,12 +1266,14 @@ export default async function AppointmentDetailPage({
           </div>
         )}
 
-        {/* Footer / Firmas */}
         <div className="mt-20 flex justify-between items-center text-xs">
           <div className="space-y-1">
             <p>________________________________________</p>
             <p className="font-semibold text-slate-800">Firma del Especialista</p>
-            <p className="text-slate-500">Dr(a). {appointment.user.name}</p>
+            <p className="text-slate-500">{getProfessionalTitle(appointment.user.role, appointment.user.titulo, appointment.user.name)}</p>
+            {appointment.user.cedulaProfesional && (
+              <p className="text-[10px] text-slate-400">Cédula Profesional: {appointment.user.cedulaProfesional}</p>
+            )}
             <p className="text-[10px] text-slate-400">Área: {appointment.service}</p>
           </div>
           <div className="text-right space-y-1 text-slate-500">
