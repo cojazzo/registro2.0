@@ -775,18 +775,14 @@ export default async function AppointmentDetailPage({
               background: transparent !important;
             }
             .print-report-container {
-              position: absolute !important;
-              top: 0 !important;
-              left: 0 !important;
+              position: relative !important;
               width: 215.9mm !important;
-              height: 279.4mm !important;
+              min-height: 279.4mm !important;
               padding: 12mm 15mm !important;
               box-sizing: border-box !important;
-              page-break-after: avoid !important;
-              page-break-before: avoid !important;
-              overflow: hidden !important;
             }
-            .print-report-container img {
+            /* Con position: absolute, la imagen de fondo se queda en la página 1 */
+            .print-report-container img.print-bg {
               position: absolute !important;
               top: 0 !important;
               left: 0 !important;
@@ -802,7 +798,7 @@ export default async function AppointmentDetailPage({
             .print-report-container .bg-slate-100 {
               background-color: rgba(241, 245, 249, 0.82) !important;
             }
-            /* Ajustes de tamaño de letra y márgenes para meter todo en una sola página */
+            /* Ajustes de tamaño de letra */
             .print-report-container text, 
             .print-report-container p, 
             .print-report-container td, 
@@ -829,12 +825,19 @@ export default async function AppointmentDetailPage({
             }
             .print-report-container .mt-20 {
               margin-top: 22px !important;
+              page-break-inside: avoid;
             }
             .print-report-container .space-y-4 > * + * {
               margin-top: 4px !important;
             }
             .print-report-container .space-y-6 > * + * {
               margin-top: 6px !important;
+            }
+            /* Evitar que elementos se corten a la mitad entre páginas */
+            .print-report-container .grid,
+            .print-report-container table,
+            .print-report-container > div > div > div {
+              page-break-inside: avoid;
             }
           }
         `}} />
@@ -843,7 +846,7 @@ export default async function AppointmentDetailPage({
         <img 
           src="/background-report.svg" 
           alt="Fondo de Reporte" 
-          className="absolute inset-0 w-full h-full pointer-events-none" 
+          className="print-bg pointer-events-none" 
           style={{ zIndex: 1 }} 
         />
 
