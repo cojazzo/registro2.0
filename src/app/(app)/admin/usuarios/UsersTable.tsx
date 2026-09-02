@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { Plus, Pencil, ShieldCheck, Eye, User2, HeartPulse, Apple, Brain, GraduationCap, Users } from 'lucide-react'
+import { Plus, Pencil, ShieldCheck, Eye, User2, Apple, Brain, GraduationCap, Users } from 'lucide-react'
 import { CreateUserModal } from '@/components/admin/CreateUserModal'
 import { EditUserModal } from '@/components/admin/EditUserModal'
 
@@ -37,14 +37,15 @@ const ROLE_COLORS: Record<string, React.CSSProperties> = {
   READ_ONLY:      { background: 'rgba(100,116,139,0.12)',color: '#94a3b8', border: '1px solid rgba(100,116,139,0.3)' },
 }
 
-const ROLE_ICONS: Record<string, React.ElementType> = {
-  ADMIN:          ShieldCheck,
-  DOCTOR:         User2,
-  TRABAJO_SOCIAL: Users,
-  NUTRICION:      Apple,
-  PSICOLOGIA:     Brain,
-  ESTUDIANTE:     GraduationCap,
-  READ_ONLY:      Eye,
+function getRoleIcon(role: string) {
+  const s = 11
+  if (role === 'ADMIN')          return <ShieldCheck size={s} />
+  if (role === 'DOCTOR')         return <User2 size={s} />
+  if (role === 'TRABAJO_SOCIAL') return <Users size={s} />
+  if (role === 'NUTRICION')      return <Apple size={s} />
+  if (role === 'PSICOLOGIA')     return <Brain size={s} />
+  if (role === 'ESTUDIANTE')     return <GraduationCap size={s} />
+  return <Eye size={s} />
 }
 
 export function UsersTable({ users: initialUsers }: { users: UserRow[] }) {
@@ -130,7 +131,6 @@ export function UsersTable({ users: initialUsers }: { users: UserRow[] }) {
             </thead>
             <tbody>
               {users.map((user, i) => {
-                const RoleIcon = ROLE_ICONS[user.role] ?? User2
                 return (
                   <tr
                     key={user.id}
@@ -193,7 +193,7 @@ export function UsersTable({ users: initialUsers }: { users: UserRow[] }) {
                           ...(ROLE_COLORS[user.role] ?? ROLE_COLORS.READ_ONLY),
                         }}
                       >
-                        <RoleIcon size={11} />
+                        {getRoleIcon(user.role)}
                         {ROLE_LABELS[user.role] ?? user.role}
                       </span>
                     </td>
