@@ -1270,9 +1270,15 @@ export default async function AppointmentDetailPage({
           <div className="space-y-1">
             <p>________________________________________</p>
             <p className="font-semibold text-slate-800">Firma del Especialista</p>
-            <p className="text-slate-500">{getProfessionalTitle(appointment.user.role, appointment.user.titulo, appointment.user.name)}</p>
-            {appointment.user.cedulaProfesional && (
-              <p className="text-[10px] text-slate-400">Cédula Profesional: {appointment.user.cedulaProfesional}</p>
+            <p className="text-slate-500">
+              {primaryNote 
+                ? getProfessionalTitle(primaryNote.user.role, primaryNote.user.titulo, primaryNote.user.name)
+                : getProfessionalTitle(appointment.user.role, appointment.user.titulo, appointment.user.name)}
+            </p>
+            {(primaryNote?.user.cedulaProfesional || appointment.user.cedulaProfesional) && (
+              <p className="text-[10px] text-slate-400">
+                Cédula Profesional: {primaryNote?.user.cedulaProfesional || appointment.user.cedulaProfesional}
+              </p>
             )}
             <p className="text-[10px] text-slate-400">Área: {appointment.service}</p>
           </div>
