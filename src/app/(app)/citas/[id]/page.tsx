@@ -834,9 +834,7 @@ export default async function AppointmentDetailPage({
               margin-top: 6px !important;
             }
             /* Evitar que elementos se corten a la mitad entre páginas */
-            .print-report-container .grid,
-            .print-report-container table,
-            .print-report-container > div > div > div {
+            .print-report-container table {
               page-break-inside: avoid;
             }
           }
